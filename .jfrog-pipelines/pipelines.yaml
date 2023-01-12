@@ -1,0 +1,21 @@
+resources:
+  - name: InputViolationWebhook
+    type: IncomingWebhook
+    configuration:
+      webhookName: WebappWatchHook
+pipelines:
+# First pipeline : Create and sign the release bundle
+  - name: analyze_violation
+    configuration:
+      chronological: true
+    steps:
+    - name: ProcessPayload
+      type: Bash
+      configuration:
+        inputResources:
+          - name: InputViolationWebhook
+      execution:
+      # Here we extract data from the webhook payload
+          onExecute:
+            - echo "$res_InputViolationWebhook_payload" | jq '.' > payload.json
+            - cat payload.json
